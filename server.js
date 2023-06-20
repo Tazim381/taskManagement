@@ -96,7 +96,7 @@ const authenticateToken =(req,res,next) =>{
     }
 }
 
-app.post("/createTask",authenticateToken,async (req, res) => {
+app.post("/users/createTask",authenticateToken,async (req, res) => {
     const taskObj = {
         name: req.body.name,
         type: req.body.type,
@@ -106,6 +106,16 @@ app.post("/createTask",authenticateToken,async (req, res) => {
     await task.save()
     res.status(201).json(task)
 });
+
+app.get("/users/showTask",authenticateToken, async(req,res) =>{
+    const id = req.user.id
+    const tasks = await Task.find({user :id});
+    if(!tasks){
+        res.status(404).json({message:"task not found"})
+    } else {
+        res.status(200).json(tasks)
+    }
+})
 
 app.listen(port, () => {
     console.log("Connected to port 6000");
